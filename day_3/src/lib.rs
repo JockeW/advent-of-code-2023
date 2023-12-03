@@ -22,9 +22,30 @@ pub fn part_one(input: &str) -> usize {
         grid.push(grid_line);
     }
 
-    for row in grid {
-        for c in row {
+    for (y, row) in grid.iter().enumerate() {
+        let mut number_string: String = String::new();
+        for (x, c) in row.iter().enumerate() {
+            //let mut number_found = false;
             
+            if c.is_digit(10) {
+                number_string.push(*c);
+
+                if x == row.len() - 1 {
+                    //End of line. We have a full number
+
+                    //Do stuff
+
+                    //number_found = false;
+                }
+                //number_found = true;
+            } else if number_string.len() > 0 {
+                //We have a full number that ends on previous position
+                
+                //Check for symbol adjecent to any digit in number_string
+
+                //number_found = false;
+                number_string = String::new();
+            }
         }
     }
 

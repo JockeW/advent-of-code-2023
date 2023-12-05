@@ -24,7 +24,6 @@ pub fn part_one(input: &str) -> u64 {
             if line.is_empty() || index == lines[2..lines.len()].len() - 1 {
                 if mapping_found == false {
                     destination = source;
-                    println!("Destination (same as source): {}", destination);
                 }
 
                 continue;
@@ -38,7 +37,6 @@ pub fn part_one(input: &str) -> u64 {
                 .is_digit(10)
                 == false
             {
-                println!("New mapping: {}", line);
                 source = destination;
                 destination = 0;
                 mapping_found = false;

@@ -1,8 +1,3 @@
-use std::{
-    collections::{BTreeMap, HashMap},
-    ops::Range,
-};
-
 pub fn part_one(input: &str) -> u64 {
     let lines = input
         .trim()
@@ -94,8 +89,6 @@ pub fn part_two(input: &str) -> u64 {
         .filter(|&x| !x.is_empty())
         .collect::<Vec<&str>>();
 
-    //println!("Lines: {:?}", lines);
-
     let seed_values: Vec<u64> = lines[0].split(":").collect::<Vec<&str>>()[1]
         .trim()
         .split(" ")
@@ -112,7 +105,6 @@ pub fn part_two(input: &str) -> u64 {
 
     let mut maps: Vec<Vec<Vec<u64>>> = lines[2..]
         .split(|line| line.chars().next().unwrap().is_ascii_alphabetic())
-        //.filter(|group| !group.is_empty())
         .map(|group| {
             group
                 .iter()
@@ -125,29 +117,17 @@ pub fn part_two(input: &str) -> u64 {
         })
         .collect();
 
-    //println!("Maps: {:?}", maps);
-
     maps.reverse();
-    //println!("Maps reversed: {:?}", maps);
 
-    //let mut lowest_found = false;
     let mut location_value = 0;
 
     loop {
-        // if location_value > 10 {
-        //     break;
-        // }
-        println!("Location value: {}", location_value);
         let mut destination_value = location_value;
         for map in &maps {
-            //println!("Checking map: {:?}", map);
             destination_value = check_map_for_value(map, destination_value);
-            //println!("Destination value: {}", destination_value);
         }
-        // println!("Seed value: {}", destination_value);
-        // println!();
 
-        //Check if destination_value now is any of my seeds. If so, lowest location was found. Else start over with one higher location_value
+        //Check if destination_value now is any of the seeds. If so, lowest location was found. Else start over with one higher location_value
         let seed_found = ranges
             .iter()
             .map(|r| r.0..r.1)
@@ -168,17 +148,12 @@ fn check_map_for_value(map: &Vec<Vec<u64>>, value: u64) -> u64 {
         .iter()
         .filter(|&v| (v[0]..(v[0] + v[2])).contains(&value))
         .map(|v| {
-            //println!("Found map: {:?}", v);
-            // let difference = v[0].abs_diff(v[1]);
-            // println!("Diff: {}", difference);
             let diff_from_start = value - v[0];
             let source_value = v[1] + diff_from_start;
-            //println!("Source value: {}", source_value);
 
             return source_value;
         })
         .collect::<Vec<u64>>();
-    //println!("Map range: {:?}", map_range);
 
     let mapping = map_range.first();
 
@@ -188,72 +163,25 @@ fn check_map_for_value(map: &Vec<Vec<u64>>, value: u64) -> u64 {
     }
 }
 
-// fn get_maps(lines: Vec<&str>) -> Vec<Vec<u64>> {
-//     let mut maps: Vec<Vec<(u64, u64, u64)>> = Vec::new();
-//     // maps.insert("seed-to-soil", Vec::new());
-//     // maps.insert("soil-to-fertilizer", Vec::new());
-//     // maps.insert("fertilizer-to-water", Vec::new());
-//     // maps.insert("water-to-light", Vec::new());
-//     // maps.insert("light-to-temperature", Vec::new());
-//     // maps.insert("temperature-to-humidity", Vec::new());
-//     // maps.insert("humidity-to-location", Vec::new());
-//     let mut map_index = 0;
-//     //let mut current_map = &maps[map_index];
-
-//     for &line in lines[3..].iter() {
-//         if line
-//             .chars()
-//             .collect::<Vec<char>>()
-//             .first()
-//             .unwrap()
-//             .is_digit(10)
-//             == false
-//         {
-//             continue;
-//         }
-
-//         if line.is_empty() {
-//             let ma
-//             //map_index += 1;
-//             //current_map = &maps[map_index];
-//             continue;
-//         }
-
-//         let map_numbers: Vec<u64> = line
-//             .split(" ")
-//             .collect::<Vec<&str>>()
-//             .iter()
-//             .map(|&m| m.parse::<u64>().unwrap())
-//             .collect();
-
-//         let source_map = map_numbers[1];
-//         let destination_map = map_numbers[0];
-//         let map_range = map_numbers[2];
-
-//     }
-
-//     maps
-// }
-
 #[cfg(test)]
 mod tests {
-    // #[test]
-    // fn example() {
-    //     assert_eq!(super::part_one(include_str!("example.txt")), 35);
-    // }
+    #[test]
+    fn example() {
+        assert_eq!(super::part_one(include_str!("example.txt")), 35);
+    }
 
-    // #[test]
-    // fn part_one() {
-    //     assert_eq!(super::part_one(include_str!("input.txt")), 26273516);
-    // }
+    #[test]
+    fn part_one() {
+        assert_eq!(super::part_one(include_str!("input.txt")), 26273516);
+    }
 
-    // #[test]
-    // fn example2() {
-    //     assert_eq!(super::part_two(include_str!("example.txt")), 46);
-    // }
+    #[test]
+    fn example2() {
+        assert_eq!(super::part_two(include_str!("example.txt")), 46);
+    }
 
     #[test]
     fn part_two() {
-        assert_eq!(super::part_two(include_str!("input.txt")), 0);
+        assert_eq!(super::part_two(include_str!("input.txt")), 34039469);
     }
 }

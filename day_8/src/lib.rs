@@ -66,13 +66,44 @@ pub fn part_two(input: &str) -> usize {
     let instructions: &str = lines[0].trim();
     let nodes = get_nodes(lines);
 
-    let current_nodes = nodes
+    let mut current_nodes = nodes
         .iter()
-        .filter(|n| n.0.ends_with("A"))
-        .map(|n| (n.0, (n.1 .0, n.1 .1)))
-        .collect::<HashMap<&str, &(String, String)>>();
+        .filter(|&n| n.0.ends_with("A"))
+        .map(|(_k, v)| ((v.0.as_str(), v.1.as_str())))
+        .collect::<Vec<(&str, &str)>>();
 
-    0
+    let mut steps = 1;
+
+    for ins in instructions.chars().cycle() {
+        let mut next_nodes: Vec<&str> = Vec::new();
+        if ins == 'R' {
+            for node in &current_nodes {
+                next_nodes.push(node.0);
+            }
+        } else {
+            for node in &current_nodes {
+                next_nodes.push(node.1);
+            }
+        }
+
+        current_nodes = Vec::new();
+
+        for next in next_nodes {
+            let node = nodes.get(next).unwrap();
+            current_nodes.push((node.0.as_str(), node.1.as_str()));
+        }
+
+        println!("Current nodes: {:?}", current_nodes);
+
+        if current_nodes.iter().all(|n| n.0.ends_with("Z")) {//Need to fix this! Need the node id, not just edges
+            break;
+        }
+
+        //current_node = nodes.get(next_node).unwrap();
+        steps += 1;
+    }
+
+    steps
 }
 
 #[cfg(test)]
@@ -94,7 +125,7 @@ mod tests {
 
     #[test]
     fn example_part_two() {
-        assert_eq!(super::part_one(include_str!("example_part_two.txt")), 6);
+        assert_eq!(super::part_two(include_str!("example_part_two.txt")), 6);
     }
 
     // #[test]

@@ -1,4 +1,4 @@
-pub fn part_one(input: &str) -> usize {
+pub fn part_one(input: &str) -> i32 {
     let histories: Vec<Vec<i32>> = input
         .trim()
         .split('\n')
@@ -10,12 +10,9 @@ pub fn part_one(input: &str) -> usize {
         })
         .collect();
 
-    //println!("Histories: {:?}", histories);
+    let mut next_values: Vec<i32> = Vec::new();
 
     for history in histories {
-        //let test = history.iter().map(|n| n - n.)
-        //let iterator = history.iter();
-
         let mut sequences: Vec<Vec<i32>> = Vec::new();
         sequences.push(history);
 
@@ -37,12 +34,19 @@ pub fn part_one(input: &str) -> usize {
             }
         }
 
-        println!("Sequences: {:?}", sequences);
+        sequences.reverse();
+        let mut increase_by = 0;
+        for mut sequence in sequences {
+            let new_sequence_number = sequence.last().unwrap() + increase_by;
+            sequence.push(new_sequence_number);
 
-        //TODO: extrapolate!
+            increase_by = new_sequence_number;
+        }
+
+        next_values.push(increase_by);
     }
 
-    0
+    next_values.iter().sum()
 }
 
 pub fn part_two(input: &str) -> usize {
@@ -59,10 +63,10 @@ mod tests {
         assert_eq!(super::part_one(include_str!("example.txt")), 114);
     }
 
-    // #[test]
-    // fn part_one() {
-    //     assert_eq!(super::part_one(include_str!("input.txt")), 0);
-    // }
+    #[test]
+    fn part_one() {
+        assert_eq!(super::part_one(include_str!("input.txt")), 1953784198);
+    }
 
     // #[test]
     // fn part_two() {

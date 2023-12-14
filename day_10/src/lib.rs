@@ -115,26 +115,14 @@ fn get_connected_pipe(
         {
             return ((current_pipe.0 .0, current_pipe.0 .1 + 1), *n);
         } else {
-            println!("South: {:?}", south_neighbor);
-            println!("North: {:?}", north_neighbor);
-            println!("West: {:?}", west_neighbor);
-            println!("East: {:?}", east_neighbor);
-            println!("Current: {:?}", current_pipe);
-            println!("Previous: {:?}", previous_pipe);
             panic!("NO VALID NEIGHBOR");
         }
     } else {
-        println!("South: {:?}", south_neighbor);
-        println!("North: {:?}", north_neighbor);
-        println!("West: {:?}", west_neighbor);
-        println!("East: {:?}", east_neighbor);
-        println!("Current: {:?}", current_pipe);
-        println!("Previous: {:?}", previous_pipe);
         panic!("NO VALID NEIGHBOR");
     }
 }
 
-pub fn part_two(input: &str) -> usize {
+pub fn part_two(input: &str) -> u32 {
     let mut grid: HashMap<(i32, i32), char> = HashMap::new();
 
     for (y, line) in input.trim().split('\n').enumerate() {
@@ -200,45 +188,61 @@ pub fn part_two(input: &str) -> usize {
         current_pipe = next_pipe;
     }
 
-    println!("LOOP: {:?}", pipes_loop);
+    let area = polygon_area(&pipes_loop);
 
-    //TODO: For every tile in grid, check that it hits the loop in all direction, and that all neighbors also do (OR rather that all tiles does NOT hits any edge of grid)
-    // Spread out from one tile (like 0,0 or first that isn't part of main loop) and check that no tiles gets to edge of grid. If any does, skip all of the checked tiles and continue. 
-    // If they does not, they are enclosed in loop. Save them and continue with other tiles
+    let part = pipes_loop.len() / 2;
+    let part_u32: u32 = part.try_into().unwrap();
+    let answer: u32 = area + 1 - part_u32;
 
+    answer
+}
 
-    25
+fn polygon_area(tiles: &Vec<(i32, i32)>) -> u32 {
+    let mut sum_1 = 0;
+    let mut sum_2 = 0;
+
+    for i in 0..tiles.len() - 1 {
+        sum_1 += tiles[i].0 * tiles[i + 1].1;
+        sum_2 += tiles[i].1 * tiles[i + 1].0;
+    }
+
+    sum_1 += tiles[tiles.len() - 1].0 * tiles[0].1;
+    sum_2 += tiles[tiles.len() - 1].1 * tiles[0].0;
+
+    let area = sum_1.abs_diff(sum_2) / 2;
+
+    area
 }
 
 #[cfg(test)]
 mod tests {
-    // #[test]
-    // fn example() {
-    //     assert_eq!(super::part_one(include_str!("example.txt")), 8);
-    // }
+    #[test]
+    fn example() {
+        assert_eq!(super::part_one(include_str!("example.txt")), 8);
+    }
 
-    // #[test]
-    // fn part_one() {
-    //     assert_eq!(super::part_one(include_str!("input.txt")), 7005);
-    // }
+    #[test]
+    fn part_one() {
+        assert_eq!(super::part_one(include_str!("input.txt")), 7005);
+    }
 
     #[test]
     fn example_part_two() {
         assert_eq!(super::part_two(include_str!("example_part_two.txt")), 4);
     }
 
-    // #[test]
-    // fn example2_part_two() {
-    //     assert_eq!(super::part_two(include_str!("example2_part_two.txt")), 8);
-    // }
+    #[test]
+    fn example2_part_two() {
+        assert_eq!(super::part_two(include_str!("example2_part_two.txt")), 8);
+    }
 
-    // #[test]
-    // fn example3_part_two() {
-    //     assert_eq!(super::part_two(include_str!("example3_part_two.txt")), 10);
-    // }
+    #[test]
+    fn example3_part_two() {
+        assert_eq!(super::part_two(include_str!("example3_part_two.txt")), 10);
+    }
 
-    // #[test]
-    // fn part_two() {
-    //     assert_eq!(super::part_two(include_str!("input.txt")), 0);
-    // }
+    #[test]
+    fn part_two() {
+        assert_eq!(super::part_two(include_str!("input.txt")), 417);
+    }
 }

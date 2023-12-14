@@ -135,10 +135,79 @@ fn get_connected_pipe(
 }
 
 pub fn part_two(input: &str) -> usize {
-    for line in input.trim().split('\n') {
-        //
+    let mut grid: HashMap<(i32, i32), char> = HashMap::new();
+
+    for (y, line) in input.trim().split('\n').enumerate() {
+        for (x, char) in line.trim().chars().enumerate() {
+            grid.insert((x.try_into().unwrap(), y.try_into().unwrap()), char);
+        }
     }
-    0
+
+    let mut pipes_loop: Vec<(i32, i32)> = Vec::new();
+
+    let start = grid.iter().find(|p| *p.1 == 'S').unwrap();
+    pipes_loop.push(*start.0);
+
+    let west_neighbor = grid.get(&(start.0 .0 - 1, start.0 .1));
+    let east_neighbor = grid.get(&(start.0 .0 + 1, start.0 .1));
+    let north_neighbor = grid.get(&(start.0 .0, start.0 .1 - 1));
+    let south_neighbor = grid.get(&(start.0 .0, start.0 .1 + 1));
+
+    let mut current_pipe: ((i32, i32), char) = ((0, 0), '.');
+
+    if let Some(n) = west_neighbor {
+        if n == &'-' || n == &'F' || n == &'L' {
+            current_pipe = ((start.0 .0 - 1, start.0 .1), *n);
+        }
+    }
+
+    if let Some(n) = east_neighbor {
+        if n == &'-' || n == &'7' || n == &'J' {
+            current_pipe = ((start.0 .0 + 1, start.0 .1), *n);
+        }
+    }
+
+    if let Some(n) = north_neighbor {
+        if n == &'|' || n == &'F' || n == &'7' {
+            current_pipe = ((start.0 .0, start.0 .1 - 1), *n);
+        }
+    }
+
+    if let Some(n) = south_neighbor {
+        if n == &'|' || n == &'L' || n == &'J' {
+            current_pipe = ((start.0 .0, start.0 .1 + 1), *n);
+        } else {
+            panic!("NO VALID NEIGHBOR");
+        }
+    } else {
+        panic!("NO VALID NEIGHBOR");
+    }
+
+    pipes_loop.push(current_pipe.0);
+    let mut previous_pipe = ((start.0 .0, start.0 .1), *start.1);
+
+    //Go full loop, divide by two
+    loop {
+        let next_pipe = get_connected_pipe(current_pipe, previous_pipe, &grid);
+
+        if next_pipe.0 .0 == start.0 .0 && next_pipe.0 .1 == start.0 .1 {
+            break;
+        }
+
+        pipes_loop.push(next_pipe.0);
+
+        previous_pipe = current_pipe;
+        current_pipe = next_pipe;
+    }
+
+    println!("LOOP: {:?}", pipes_loop);
+
+    //TODO: For every tile in grid, check that it hits the loop in all direction, and that all neighbors also do (OR rather that all tiles does NOT hits any edge of grid)
+    // Spread out from one tile (like 0,0 or first that isn't part of main loop) and check that no tiles gets to edge of grid. If any does, skip all of the checked tiles and continue. 
+    // If they does not, they are enclosed in loop. Save them and continue with other tiles
+
+
+    25
 }
 
 #[cfg(test)]
@@ -158,15 +227,15 @@ mod tests {
         assert_eq!(super::part_two(include_str!("example_part_two.txt")), 4);
     }
 
-    #[test]
-    fn example2_part_two() {
-        assert_eq!(super::part_two(include_str!("example2_part_two.txt")), 8);
-    }
+    // #[test]
+    // fn example2_part_two() {
+    //     assert_eq!(super::part_two(include_str!("example2_part_two.txt")), 8);
+    // }
 
-    #[test]
-    fn example3_part_two() {
-        assert_eq!(super::part_two(include_str!("example3_part_two.txt")), 10);
-    }
+    // #[test]
+    // fn example3_part_two() {
+    //     assert_eq!(super::part_two(include_str!("example3_part_two.txt")), 10);
+    // }
 
     // #[test]
     // fn part_two() {

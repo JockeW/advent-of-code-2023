@@ -143,14 +143,29 @@ pub fn part_two(input: &str) -> usize {
 
 #[cfg(test)]
 mod tests {
+    // #[test]
+    // fn example() {
+    //     assert_eq!(super::part_one(include_str!("example.txt")), 8);
+    // }
+
+    // #[test]
+    // fn part_one() {
+    //     assert_eq!(super::part_one(include_str!("input.txt")), 7005);
+    // }
+
     #[test]
-    fn example() {
-        assert_eq!(super::part_one(include_str!("example.txt")), 8);
+    fn example_part_two() {
+        assert_eq!(super::part_two(include_str!("example_part_two.txt")), 4);
     }
 
     #[test]
-    fn part_one() {
-        assert_eq!(super::part_one(include_str!("input.txt")), 7005);
+    fn example2_part_two() {
+        assert_eq!(super::part_two(include_str!("example2_part_two.txt")), 8);
+    }
+
+    #[test]
+    fn example3_part_two() {
+        assert_eq!(super::part_two(include_str!("example3_part_two.txt")), 10);
     }
 
     // #[test]

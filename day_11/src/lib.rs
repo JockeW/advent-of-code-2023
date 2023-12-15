@@ -8,6 +8,7 @@ struct Galaxy {
 
 pub fn part_one(input: &str) -> usize {
     let mut image: Vec<(usize, usize, char)> = Vec::new();
+    let mut expanded_image: Vec<(usize, usize, char)> = Vec::new();
     let mut galaxy_name = 0;
     //First expand universe
     for (y, line) in input.trim().split('\n').enumerate() {
@@ -37,28 +38,10 @@ pub fn part_one(input: &str) -> usize {
 
         if spaces.iter().all(|&s| s.2 == '.') {
             //is_empty = true;
-            // Insert new row after current row
+            
             let mut new_row: Vec<(usize, usize, char)> = Vec::new();
             for x in 0..num_of_columns {
                 new_row.push((x, row, '.'));
-            }
-
-            image.append(&mut new_row);
-            // Update all rows after this new row. Adding one to all y values from y of current row (row).
-            let mut spaces_to_update: Vec<((usize, usize, char), usize)> = image
-                .iter()
-                .enumerate()
-                .filter(|(i, &s)| s.1 > row)
-                .map(|(i, s)| (s.to_owned(), i))
-                .collect();
-
-            //println!("Spaces to update: {:?}", spaces_to_update);
-            for mut space in spaces_to_update {
-                space.0 .1 = space.0 .1 + 1;
-                let removed = image.remove(space.1);
-                // println!("Removed: {:?}", removed);
-                // println!("Adding: {:?}", space);
-                image.push(space.0);
             }
         }
     }
@@ -80,8 +63,6 @@ pub fn part_one(input: &str) -> usize {
     // println!("Number of columns: {}", num_of_columns + 1);
 
     //Second name galaxies
-    let mut galaxies: Vec<Galaxy> = Vec::new();
-    let mut galaxy_name = 1;
     //for p in image {}
 
     //Third collect all pairs and then get shortest path between them

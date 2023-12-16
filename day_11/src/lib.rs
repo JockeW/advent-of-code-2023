@@ -7,65 +7,53 @@ struct Galaxy {
 }
 
 pub fn part_one(input: &str) -> usize {
+    let lines: Vec<&str> = input.trim().split('\n').collect();
+    let mut galaxies: Vec<Galaxy> = Vec::new();
     let mut image: Vec<(usize, usize, char)> = Vec::new();
-    let mut expanded_image: Vec<(usize, usize, char)> = Vec::new();
+    //let mut expanded_image: Vec<Vec<(usize, usize, char)>> = Vec::new();
     let mut galaxy_name = 0;
+
+    let mut expanded_rows: Vec<usize> = Vec::new();
+    let mut expanded_cols: Vec<usize> = Vec::new();
     //First expand universe
-    for (y, line) in input.trim().split('\n').enumerate() {
+    for (y, &line) in lines.iter().enumerate() {
+        let mut row_empty = true;
         for (x, c) in line.trim().chars().enumerate() {
-            //println!("{}", c);
+            image.push((x, y, c));
+
+            if y == 0 {
+                //Check all cols (x)
+                let any_galaxy_in_col = lines
+                    .iter()
+                    .map(|&l| l.chars().nth(x).unwrap())
+                    .any(|c| c == '#');
+
+                if !any_galaxy_in_col {
+                    expanded_cols.push(x);
+                }
+            }
+
             if c == '#' {
-                image.push((x, y, char::from_digit(galaxy_name, 10).unwrap()));
+                galaxies.push(Galaxy {
+                    name: galaxy_name,
+                    x,
+                    y,
+                });
                 galaxy_name += 1;
-            } else {
-                image.push((x, y, '.'));
+
+                row_empty = false;
             }
         }
-    }
-    //println!("{:?}", image);
 
-    let mut num_of_rows = image.iter().map(|p| p.1).max().unwrap();
-    let mut num_of_columns = image.iter().map(|p| p.0).max().unwrap();
-    // println!("Number of rows: {}", num_of_rows + 1);
-    // println!("Number of columns: {}", num_of_columns + 1);
-
-    for row in 0..num_of_rows {
-        //let mut is_empty = false;
-        let spaces = image
-            .iter()
-            .filter(|&s| s.1 == row)
-            .collect::<Vec<&(usize, usize, char)>>();
-
-        if spaces.iter().all(|&s| s.2 == '.') {
-            //is_empty = true;
-            
-            let mut new_row: Vec<(usize, usize, char)> = Vec::new();
-            for x in 0..num_of_columns {
-                new_row.push((x, row, '.'));
-            }
+        if row_empty {
+            expanded_rows.push(y);
         }
     }
 
-    image.sort_by(|a, b| {
-        if a.0 == b.0 {
-            a.1.partial_cmp(&b.1).unwrap()
-        } else {
-            a.0.partial_cmp(&b.0).unwrap()
-        }
-    });
-    //println!("IMAGE: {:?}", image);
-    print_image(image);
+    println!("Expanded rows: {:?}", expanded_rows);
+    println!("Expanded cols: {:?}", expanded_cols);
 
-    // println!("{:?}", image);
-    // num_of_rows = image.iter().map(|p| p.1).max().unwrap();
-    // num_of_columns = image.iter().map(|p| p.0).max().unwrap();
-    // println!("Number of rows: {}", num_of_rows + 1);
-    // println!("Number of columns: {}", num_of_columns + 1);
-
-    //Second name galaxies
-    //for p in image {}
-
-    //Third collect all pairs and then get shortest path between them
+    //Collect all pairs and then get shortest path between them
 
     0
 }
